@@ -22,6 +22,7 @@ define_ProjectId!(
     (LlvmProject, llvm_project),
     (Mesa3DDesktopIntel, mesa3d_desktop_intel),
     (Mesa3DDesktopPanVK, mesa3d_desktop_panvk),
+    (Mesa3DPanVK,mesa3d_25xx),
     (OpenclCts, opencl_cts),
     (OpenclHeaders, opencl_headers),
     (OpenclIcdLoader, opencl_icd_loader),
