@@ -19,6 +19,7 @@ define_ProjectId!(
     (Clpeak, clpeak),
     (Clvk, clvk),
     (Clspv, clspv),
+    (Fwupd, fwupd),
     (LlvmProject, llvm_project),
     (Mesa3DDesktopIntel, mesa3d_desktop_intel),
     (Mesa3DDesktopPanVK, mesa3d_desktop_panvk),
@@ -122,7 +123,6 @@ pub trait Project {
     // MANDATORY FUNCTIONS
     fn get_name(&self) -> &'static str;
     fn get_android_path(&self) -> Result<PathBuf, String>;
-    fn get_test_path(&self, ctx: &Context) -> Result<PathBuf, String>;
     fn generate_package(
         &mut self,
         ctx: &Context,
@@ -145,6 +145,13 @@ pub trait Project {
         module: SoongModule,
     ) -> Result<SoongModule, String> {
         Ok(module)
+    }
+    fn extend_python_binary_host(
+        &self,
+        _python_binary_path: &Path,
+        _module: SoongModule,
+    ) -> Result<Option<SoongModule>, String> {
+        Ok(None)
     }
     // MAP FUNCTIONS
     fn map_cmd_output(&self, output: &Path) -> PathBuf {

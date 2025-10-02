@@ -18,10 +18,11 @@
 
 * [Rust](https://www.rust-lang.org/)
 * [Ninja](https://ninja-build.org/)
-* [CMake](https://cmake.org/)
-* [GN](https://gn.googlesource.com/gn/)
-* [Meson](https://mesonbuild.com/)
-* Linux commands (`wget`, `unzip`, ...)
+* Depending on the projects:
+  * [CMake](https://cmake.org/)
+  * [GN](https://gn.googlesource.com/gn/)
+  * [Meson](https://mesonbuild.com/)
+  * Linux commands (`wget`, `unzip`, ...)
 
 # Using `ninja-to-soong`
 
@@ -54,6 +55,7 @@
 | [clpeak](https://github.com/krrishnarraj/clpeak) | `CMake` | `clpeak` |
 | [clspv](https://github.com/google/clspv) | `CMake` | `clvk` dependencies |
 | [clvk](https://github.com/kpet/clvk) | `CMake` | `libclvk.so` |
+| [fwupd](https://github.com/fwupd/fwupd.git) (WIP) | `Meson` | `fwupdmgr` & `fwupd-binder` |
 | [llvm-project](https://github.com/llvm/llvm-project) | `CMake` | `clvk` & `clspv` dependencies |
 | [mesa](https://www.mesa3d.org/) | `meson` | `libgallium_dri.so`, `libglapi.so`, `libEGL_mesa.so`, `libGLESv2_mesa.so`, `libGLESv1_CM_mesa.so`, `libvulkan_${VENDOR}.so` |
 | [OpenCL-CTS](https://github.com/KhronosGroup/OpenCL-CTS) | `CMake` | Every binary in `test_conformance/opencl_conformance_tests_full.csv` |
@@ -71,6 +73,8 @@ The following feature can be used to output debug information when writting a ne
 ```
 <ninja-to-soong> $ cargo run --release --features debug_project -- --aosp-path <path> <new_project>
 ```
+
+Every code leading to a change in the generated `Ninja` files should be stored under `<ninja-to-soong>/scripts/<project>`. For most project, it consists into one single `gen-ninja.sh` file.
 
 ## External project
 
@@ -90,7 +94,7 @@ pub fn get_project() -> Box<dyn Project>
 
 Then the project can be run with the following command:
 ```
-<ninja-to-soong> $ cargo run --release -- --ext-proj-path <path_to_rust_file> 
+<ninja-to-soong> $ cargo run --release -- --ext-proj-path <path_to_rust_file>
 ```
 
 # Tests
@@ -98,10 +102,9 @@ Then the project can be run with the following command:
 `ninja-to-soong` uses github actions to check that changes do not bring regression. It checks that the generated files match their reference (located in the `tests` folder).
 
 Each project in the `tests` folder contains the following files:
- * `Android.bp`: the reference file to generate
+ * `Android.bp.n2s`: the reference file to generate
  * `checkout.sh`: a script to checkout the repository in the CI
- * `gen-ninja.sh`: a script to generate `Ninja` files
 
- Modification to `checkout.sh` & `gen-ninja.sh` trigger the generation of `Ninja` files in the CI, otherwise it uses the cached files from a previous CI run.
+Modification to `checkout.sh` or anything in the `scripts/<project>` directory trigger the generation of `Ninja` files in the CI, otherwise it uses the cached files from a previous CI run.
 
 If you want more information take a look at the [github action script](.github/workflows/presubmit.yml)

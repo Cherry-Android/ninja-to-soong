@@ -13,9 +13,6 @@ impl Project for SpirvHeaders {
     fn get_android_path(&self) -> Result<PathBuf, String> {
         Ok(Path::new("external").join(self.get_name()))
     }
-    fn get_test_path(&self, ctx: &Context) -> Result<PathBuf, String> {
-        Ok(ctx.test_path.join(self.get_name()))
-    }
     fn generate_package(
         &mut self,
         ctx: &Context,
@@ -37,6 +34,16 @@ impl Project for SpirvHeaders {
             )
             .add_prop("host_supported", SoongProp::Bool(true)),
         );
+        let generate_vksp_deps = !ctx.copy_to_aosp;
+        if generate_vksp_deps {
+            package = package.add_module(
+                SoongModule::new_cc_library_headers(
+                    CcLibraryHeaders::SpirvHeadersUnified1,
+                    vec![String::from("include/spirv/unified1")],
+                )
+                .add_prop("host_supported", SoongProp::Bool(true)),
+            );
+        }
 
         for file in Dep::SpirvHeaders.get(projects_map)? {
             package = package.add_module(SoongModule::new_filegroup(
